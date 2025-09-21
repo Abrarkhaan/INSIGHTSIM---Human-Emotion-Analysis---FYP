@@ -1,25 +1,35 @@
-# InsightsIM: Multimodal Emotion Recognition with DEAP Dataset
+# InsightSim: Multimodal Human Emotion Analysis
 
-**InsightsIM** is a multimodal emotion recognition system that leverages video-based facial features (OpenFace) and EEG signals from the DEAP dataset to predict emotional states (valence, arousal, dominance, liking) using multi-label classification. The project includes training pipelines for video and EEG features, and a Flask-based web application for real-time emotion prediction and visualization.
+**InsightSim** is a multimodal human emotion analysis and recognition system that leverages video-based facial features (OpenFace) and EEG signals from the DEAP dataset to predict emotional states (valence, arousal, dominance, liking) using single and multi-label classification. The project includes training pipelines for video and EEG features, and a Flask-based web application for real-time emotion prediction and visualization.
 
-This repository contains three Jupyter notebooks:
-1. `VIDEO_DEAP_FYP.ipynb`: Processes OpenFace facial features for training and prediction.
-2. `EEG_DEAP_FYP.ipynb`: Sets up EEG signal processing and preprocessing.
-3. `DEAP_FLASK_Deployment.ipynb`: Deploys a web interface for uploading EEG (.dat) and facial (.csv) data, predicting emotions, and displaying results.
+This repository contains:
+1. `DEAP Dataset video processing, SIFT features extraction, models building notebooks`
+2. `AMAGOS Dataset video processing, HOG features extraction, models building notebooks`
+3. `AMIGOS Dataset video features (extracted with OpenFace) processing, models building notebooks`
+4. `DEAP Dataset video features (extracted with OpenFace) processing, models building notebooks`
+5. `DEAP Dataset EEG signals processing, models building notebook`
+6. `FLASK Web Deployment with NGROK`
 
 ---
 
 ## Project Overview
 
-The DEAP (Database for Emotion Analysis using Physiological signals) dataset is used to train models for classifying four emotional dimensions:
+The DEAP (Database for Emotion Analysis using Physiological signals) and AMIGOS (A Dataset for Affect, Personality and Mood Research on Individuals and Groups) datasets are used to train models for classifying four emotional dimensions:
 - **Valence**: Pleasantness (positive/negative).
 - **Arousal**: Intensity (high/low).
 - **Dominance**: Control (dominant/submissive).
 - **Liking**: Preference (like/dislike).
+<img width="982" height="371" alt="image" src="https://github.com/user-attachments/assets/7640cdd4-38c5-4fe1-bd81-7fe1b7202777" />
+
 
 The system extracts:
-- **Facial Features**: 44 OpenFace features (e.g., action units like AU01_c to AU45_c), reduced via PCA, processed with a neural network.
+- **Facial Features**: OpenFace features (e.g., action units like AU01_c to AU45_c), reduced via PCA, processed with a neural network. (This step is done with OpenFace through CLI or OpenFace Application)
+<img width="794" height="394" alt="image" src="https://github.com/user-attachments/assets/54792046-432d-4aba-920d-ab69846401ab" />
+
+
 - **EEG Features**: Power spectral density (PSD) from four channels (Fp1, F3, Fp2, F4) across theta, alpha, beta, and gamma bands, classified using MLPClassifier.
+<img width="976" height="220" alt="image" src="https://github.com/user-attachments/assets/3d3deaac-d985-479b-b52c-506c2918fb91" />
+
 
 Predictions are mapped to 16 emotional states (e.g., "Joyful, Enthusiastic, Empowered" for HvHaHdHl) via group names (e.g., HvLaLdHl).
 
@@ -34,16 +44,7 @@ Predictions are mapped to 16 emotional states (e.g., "Joyful, Enthusiastic, Empo
 ## Repository Structure
 
 ```
-InsightsIM/
-├── VIDEO_DEAP_FYP.ipynb        # Facial feature processing and model training
-├── EEG_DEAP_FYP.ipynb          # EEG signal preprocessing and setup
-├── DEAP_FLASK_Deployment.ipynb # Flask web app for deployment
-├── README.md                   # Project documentation
-├── requirements.txt            # Python dependencies
-├── images/                     # Folder for screenshots and diagrams
-│   ├── ui_screenshot.png       # [Placeholder] Web app UI
-│   ├── pipeline_diagram.png    # [Placeholder] System architecture
-│   └── predictions_chart.png   # [Placeholder] Prediction visualization
+..
 ```
 
 ---
@@ -53,7 +54,7 @@ InsightsIM/
 - **Python**: 3.10 or higher
 - **Environment**: Google Colab (recommended) or local Jupyter environment
 - **Dependencies**: Listed in `requirements.txt`
-- **Dataset**: DEAP dataset (not included; requires access)
+- **Dataset**: DEAP dataset, AMIGOS dataset (not included; requires access)
 - **ngrok**: For public URL in Flask deployment (auth token required)
 
 ### Dependencies
@@ -71,6 +72,7 @@ scikit-learn==1.5.2
 mne==0.22.0
 scipy==1.13.0
 fooof
+pickle
 flask
 flask-ngrok
 pyngrok
@@ -85,8 +87,8 @@ joblib
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-username/InsightsIM.git
-   cd InsightsIM
+   git clone https://github.com/abrarkhaan/INSIGHTSIM---Human-Emotion-Analysis---FYP.git
+   cd INSIGHTSIM---Human-Emotion-Analysis---FYP
    ```
 
 2. **Install Dependencies**:
@@ -95,9 +97,9 @@ joblib
    ```
 
 3. **Prepare DEAP Dataset**:
-   - Obtain the DEAP dataset (.dat files for EEG, .csv files for OpenFace features).
-   - Place data in a directory (e.g., `/data/deap/`) or use Kaggle dataset (`syedaliessazaidi/final-deap-dataset`).
-   - Update file paths in `VIDEO_DEAP_FYP.ipynb` and `DEAP_FLASK_Deployment.ipynb` if not using Google Drive.
+   - Obtain the DEAP dataset (.dat files for EEG, Videos for OpenFace features).
+   - Place data in a directory (e.g., `/data/deap/`).
+   - Update file paths.
 
 4. **Set Up ngrok**:
    - Sign up for an ngrok account and obtain an auth token.
@@ -119,68 +121,18 @@ joblib
 
 ## Usage
 
-### 1. Training Facial Models (`VIDEO_DEAP_FYP.ipynb`)
-- **Purpose**: Loads OpenFace features, trains a Keras neural network, and saves models.
-- **Steps**:
-  1. Run the notebook in Google Colab or Kaggle.
-  2. Update the dataset path to point to `new_kaggle_all_combined_features_and_labels.csv`.
-  3. Select 44 action unit features (e.g., AU01_c to AU45_c), apply PCA, and binarize labels (threshold at 5).
-  4. Train the neural network (512→256→128→64→4 units) for multi-label classification.
-  5. Save models as `fyp3_valence.pkl`, `fyp3_arousal.pkl`, etc.
-- **Output**: Trained models for valence, arousal, dominance, and liking.
-
-**Upload Image: Training Pipeline**
-- Take a screenshot of the neural network architecture or training output (e.g., loss/accuracy plots).
-- Save as `images/pipeline_diagram.png`.
-- Embed in README:
-  ```markdown
-  ![Training Pipeline](images/pipeline_diagram.png)
-  ```
-
-### 2. EEG Preprocessing (`EEG_DEAP_FYP.ipynb`)
-- **Purpose**: Sets up EEG signal processing with MNE and explores feature extraction.
-- **Steps**:
-  1. Run the notebook to install dependencies (MNE, fooof, etc.).
-  2. Load DEAP .dat files and preprocess using ICA and band-pass filtering.
-  3. (Note: Incomplete; feature extraction and training are in `DEAP_FLASK_Deployment.ipynb`.)
-- **Output**: Preprocessed EEG data ready for feature extraction.
-
-### 3. Web Deployment (`DEAP_FLASK_Deployment.ipynb`)
-- **Purpose**: Deploys a Flask app to process EEG and facial data, predict emotions, and display results.
-- **Steps**:
-  1. Run the notebook in Google Colab.
-  2. Ensure models are in the specified Google Drive paths.
-  3. Start the Flask app and access the ngrok URL (e.g., `https://b4e4-34-75-145-246.ngrok-free.app`).
-  4. Upload an EEG .dat file and a facial .csv file via the web interface.
-  5. View predictions, group names (e.g., HvLaLdHl), and emotions (e.g., "Relaxed and Affectionate") in the tabs.
-- **Output**: JSON response with predictions, groups, and emotions; displayed in the UI.
-
-**Upload Image: Web UI**
-- Take a screenshot of the Flask app interface showing the upload form and tabs.
-- Save as `images/ui_screenshot.png`.
-- Embed in README:
-  ```markdown
-  ![Web UI](images/ui_screenshot.png)
-  ```
-
-**Upload Image: Prediction Results**
-- Capture the output of a sample prediction (e.g., Model Results tab with EEG and facial predictions).
-- Save as `images/predictions_chart.png`.
-- Embed in README:
-  ```markdown
-  ![Prediction Results](images/predictions_chart.png)
-  ```
-
+---
+..
 ---
 
 ## Project Workflow
 
 1. **Data Preparation**:
-   - Facial: Load OpenFace features, select 44 action units, apply PCA, binarize labels.
+   - Facial: Load OpenFace features, select action units, apply PCA, binarize labels.
    - EEG: Load .dat files, apply ICA and band-pass filtering, extract PSD features.
 
 2. **Model Training**:
-   - Facial: Train a Keras neural network with 44 PCA components.
+   - Facial: Train a Keras neural network with PCA components.
    - EEG: Train MLPClassifier models on 16 PSD features (4 bands × 4 channels).
 
 3. **Deployment**:
@@ -198,11 +150,15 @@ joblib
   - EEG: [1, 0, 0, 1] → HvLaLdHl → "Relaxed and Affectionate"
   - Facial: [0, 1, 1, 1] → LvHaHdHl → "Determined but Critical"
 
-**Upload Image: Sample Output**
-- Embed the sample prediction output screenshot (`images/predictions_chart.png`) here:
-  ```markdown
-  ![Sample Prediction Output](images/predictions_chart.png)
-  ```
+**User Interface**
+<img width="975" height="523" alt="image" src="https://github.com/user-attachments/assets/36886881-db3a-4b20-a073-84622227b792" />
+
+**Results on App**
+<img width="975" height="502" alt="image" src="https://github.com/user-attachments/assets/e111f6e7-9215-4f1d-b721-0cef1ebda47e" />
+<img width="975" height="467" alt="image" src="https://github.com/user-attachments/assets/8c197e56-3ba7-4f5f-8b43-e086c6e95725" />
+<img width="975" height="489" alt="image" src="https://github.com/user-attachments/assets/0a110e2c-4fa3-4cab-b044-581c88c2a412" />
+<img width="975" height="499" alt="image" src="https://github.com/user-attachments/assets/3520ff33-0a79-46cf-ab9b-dcd29ac7eda4" />
+
 
 ---
 
@@ -223,7 +179,7 @@ joblib
 
 ---
 
-## Contributing
+## Contributing???
 
 1. Fork the repository.
 2. Create a feature branch (`git checkout -b feature/your-feature`).
@@ -237,29 +193,25 @@ Please include tests and update documentation for new features.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+--.
 
 ---
 
 ## Acknowledgments
 
 - **DEAP Dataset**: Koelstra, S., et al. (2012). "DEAP: A Database for Emotion Analysis using Physiological Signals."
+- **AMIGOS Dataset**: "AMIGOS: A Dataset for Affect, Personality and Mood Research on Individuals and Groups."
 - **OpenFace**: For facial feature extraction.
 - **MNE-Python**: For EEG signal processing.
-- **xAI**: For providing Grok to assist in project analysis and documentation.
+- **NGROK**
+- **Pytorch**
+- **Scikit-learn**
+- **OpenCV Haar Cascades**
 
 ---
 
 ## Contact
 
 For questions or feedback, contact:
-- **Your Name**: your.email@example.com
-- **GitHub**: [your-username](https://github.com/your-username)
-
-**Upload Image: System Architecture**
-- Create a diagram of the project workflow (data → preprocessing → models → Flask app).
-- Save as `images/pipeline_diagram.png`.
-- Embed above in the "Training Facial Models" section or here:
-  ```markdown
-  ![System Architecture](images/pipeline_diagram.png)
-  ```
+- **LinkedIn**: [AbrarKhaan](https://linkedin.com/in/abrarkhaan)
+- **GitHub**: [AbrarKhaan](https://github.com/abrarkhaan)
