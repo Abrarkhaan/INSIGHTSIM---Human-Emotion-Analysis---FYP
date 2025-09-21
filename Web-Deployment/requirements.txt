@@ -1,0 +1,9 @@
+Flask
+pyngrok
+numpy
+pandas
+joblib
+matplotlib
+mne
+scipy
+pickle

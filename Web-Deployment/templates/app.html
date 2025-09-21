@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsightsIM - EEG & Facial Data Uploader</title>
+    <style>
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(to bottom, #ffffff, #f7f9fc);
+            color: #2c3e50;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(90deg, #4caf50, #1976d2);
+            color: #ffffff;
+            padding: 20px 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        header .logo {
+            font-size: 18px;
+            font-weight: 300;
+            opacity: 0.8;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            max-width: 1200px;
+            margin: 40px auto;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #1976d2;
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ffffff;
+            padding-bottom: 5px;
+        }
+
+        .sidebar p {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .content {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-container {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h1 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        form label {
+            font-weight: bold;
+        }
+
+        form input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #fdfdfd;
+        }
+
+        form button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        form button:hover {
+            background-color: #388e3c;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tabs button {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s;
+        }
+
+        .tabs button.active {
+            background-color: #4caf50;
+            color: #ffffff;
+            border: 1px solid #4caf50;
+            border-bottom: none;
+        }
+
+        .tab-content {
+            display: none;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            margin-top: auto Ağustos 2024
+            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #4caf50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>InsightsIM</h1>
+        <span class="logo">EEG & Facial Data Analysis Platform</span>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-container">
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>About InsightsIM</h2>
+            <p>Effortlessly upload, analyze, and visualize EEG and facial data with our intuitive platform.</p>
+            <p>Navigate through tabs to view predictions, group data, and related emotions.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+
+            <!-- File Upload Form -->
+            <div class="form-container">
+                <h1>Upload EEG and Facial Data Files</h1>
+                <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
+                    <label for="dat_file">Select EEG .dat file:</label>
+                    <input type="file" name="dat_file" id="dat_file" accept=".dat" required>
+                    <label for="csv_file">Select Facial .csv file:</label>
+                    <input type="file" name="csv_file" id="csv_file" accept=".csv" required>
+                    <button type="submit" id="submit-button">Upload Files</button>
+                </form>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="results">Model Results</button>
+                <button class="tab-button" data-tab="groups">Groups</button>
+                <button class="tab-button" data-tab="emotions">Emotions</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="results" class="tab-content active">
+                <h2>Model Results</h2>
+                <pre id="results-text">Results will be displayed here...</pre>
+            </div>
+
+            <div id="groups" class="tab-content">
+                <h2>Groups</h2>
+                <pre id="groups-text">Group details will be displayed here...</pre>
+            </div>
+
+            <div id="emotions" class="tab-content">
+                <h2>Emotions</h2>
+                <pre id="emotions-text">Emotion data will be displayed here...</pre>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2024 InsightsIM. Built with ❤️ for EEG and facial analysis. <a href="#">Learn More</a></p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        const resultsText = document.getElementById('results-text');
+        const groupsText = document.getElementById('groups-text');
+        const emotionsText = document.getElementById('emotions-text');
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+
+        form.onsubmit = async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            resultsText.textContent = "Processing...";
+            groupsText.textContent = "Waiting for group data...";
+            emotionsText.textContent = "Waiting for emotion data...";
+
+            try {
+                const response = await fetch("/upload", {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server responded with status ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.error) {
+                    resultsText.textContent = `Error: ${result.error}`;
+                } else {
+                    resultsText.textContent = result.modelResults || "No model results available.";
+                    groupsText.textContent = result.groups || "No group data available.";
+                    emotionsText.textContent = result.emotions || "No emotion data available.";
+                }
+
+            } catch (error) {
+                resultsText.textContent = `Error: ${error.message || "An unexpected error occurred."}`;
+            }
+        };
+    </script>
+</body>
+</html>
